@@ -1,6 +1,7 @@
 //---------------------------------------------------------------------------
 // ABOUT
 //---------------------------------------------------------------------------
+
 This project contains an implementation of the PLOC-BVH builder based on parallel
 locally ordered clustering. The builder is integrated into the ray tracing code 
 of Aila et al. [2]. For more details about PLOC see [1].
@@ -8,12 +9,14 @@ of Aila et al. [2]. For more details about PLOC see [1].
 //---------------------------------------------------------------------------
 // AUTHORS
 //---------------------------------------------------------------------------
+
 Daniel Meister (meistdan@fel.cvut.cz), Jiri Bittner (bittner@fel.cvut.cz)
 Czech Technical University in Prague
 
 //---------------------------------------------------------------------------
 // REQUIREMENTS
 //---------------------------------------------------------------------------
+
 - Microsoft Windows 7+
 - CUDA 7.5, compute capability 3.0+
 - Windows: Visual Studio C++ 12.0
@@ -27,6 +30,7 @@ and replace it with the appropriate version (e.g. 'CUDA 7.5' by 'CUDA 8.5').
 //---------------------------------------------------------------------------
 // CONFIGURATION
 //---------------------------------------------------------------------------
+
 The PLOC method is configurable via 'gpu-ray-traversal/ploc.cfg' file.
 - radius: 1-128
 - morton60: 0-1 
@@ -36,6 +40,7 @@ The PLOC method is configurable via 'gpu-ray-traversal/ploc.cfg' file.
 //---------------------------------------------------------------------------
 // ACKNOWLEDGMENTS
 //---------------------------------------------------------------------------
+
 We thank Timo Aila, Samuli Laine, and Tero Karras for making their high performance 
 ray tracing framework publicly available. We also thank the developers of CUB library 
 which we use for sorting. 
@@ -43,6 +48,7 @@ which we use for sorting.
 //---------------------------------------------------------------------------
 // REFERENCES
 //---------------------------------------------------------------------------
+
 [1] Daniel Meister, Jiri Bittner. Parallel Locally-Ordered Clustering for Bounding 
 Volume Hierarchy Construction. IEEE Transactions on Visualization and Computer Graphics, 
 2017.
