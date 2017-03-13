@@ -1,16 +1,19 @@
 //---------------------------------------------------------------------------
 // ABOUT
 //---------------------------------------------------------------------------
+This project contains an implementation of the PLOC-BVH builder based on parallel
+locally ordered clustering. The builder is integrated into the ray tracing code 
+of Aila et al. [2]. For more details about PLOC see [1].
 
-Implementation of the BVH builder from paper:
-- Parallel Locally-Ordered Clustering for Bounding Volume Hierarchy Construction
-- Daniel Meister (meistdan@fel.cvut.cz), Jiri Bittner (bittner@fel.cvut.cz)
-- IEEE Transactions on Visualization and Computer Grpahics, 2017
+//---------------------------------------------------------------------------
+// AUTHORS
+//---------------------------------------------------------------------------
+Daniel Meister (meistdan@fel.cvut.cz), Jiri Bittner (bittner@fel.cvut.cz)
+Czech Technical University in Prague
 
 //---------------------------------------------------------------------------
 // REQUIREMENTS
 //---------------------------------------------------------------------------
-
 - Microsoft Windows 7+
 - CUDA 7.5, compute capability 3.0+
 - Windows: Visual Studio C++ 12.0
@@ -24,7 +27,6 @@ and replace it with the appropriate version (e.g. 'CUDA 7.5' by 'CUDA 8.5').
 //---------------------------------------------------------------------------
 // CONFIGURATION
 //---------------------------------------------------------------------------
-
 The PLOC method is configurable via 'gpu-ray-traversal/ploc.cfg' file.
 - radius: 1-128
 - morton60: 0-1 
@@ -32,17 +34,24 @@ The PLOC method is configurable via 'gpu-ray-traversal/ploc.cfg' file.
 - maxLeafSize: 1-64
  
 //---------------------------------------------------------------------------
+// ACKNOWLEDGMENTS
+//---------------------------------------------------------------------------
+We thank Timo Aila, Samuli Laine, and Tero Karras for making their high performance 
+ray tracing framework publicly available. We also thank the developers of CUB library 
+which we use for sorting. 
+
+//---------------------------------------------------------------------------
 // REFERENCES
 //---------------------------------------------------------------------------
+[1] Daniel Meister, Jiri Bittner. Parallel Locally-Ordered Clustering for Bounding 
+Volume Hierarchy Construction. IEEE Transactions on Visualization and Computer Graphics, 
+2017.
 
-Understanding the Efficiency of Ray Traversal on GPUs
-- Timo Aila and Samuli Laine,
-- High-Performance Graphics 2009
-- http://www.tml.tkk.fi/~timo/publications/aila2009hpg_paper.pdf
+[2] Timo Aila and Samuli Laine. Understanding the Efficiency of Ray Traversal on GPUs. 
+High-Performance Graphics, 2009. 
+http://www.tml.tkk.fi/~timo/publications/aila2009hpg_paper.pdf
 
-High Performance and Scalable Radix Sorting
-- Duane Merrill and Andrew Grimshaw
-- Parallel Processing Letters, 2011
-- https://5d3c0b13-a-62cb3a1a-s-sites.googlegroups.com/site/duanemerrill/PplGpuSortingPreprint.pdf
-
+[3] Duane Merrill and Andrew Grimshaw. High Performance and Scalable Radix Sorting.
+Parallel Processing Letters, 2011
+https://5d3c0b13-a-62cb3a1a-s-sites.googlegroups.com/site/duanemerrill/PplGpuSortingPreprint.pdf
 
