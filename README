@@ -21,7 +21,10 @@ Czech Technical University in Prague
 - CUDA 7.5, compute capability 3.0+
 - Windows: Visual Studio C++ 12.0
 
-Note: The cub project may not be loaded correctly.
+Notes:
+The PLOC BVH builder and the ray tracing application use the CUDA driver API,
+while the CUB library used for sorting has to use the CUDA runtime API. If the
+cub project does not load correctly do the following:
 - Check 'C:\Program Files (x86)\MSBuild\Microsoft.Cpp\v4.0\V120\BuildCustomizations\'
 It should contain a props file (e.g. 'CUDA 7.5.props'). If not find it and copy it.
 - If you use different version of CUDA then check the project file (cub/cub.vcxproj)
