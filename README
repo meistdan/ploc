@@ -3,8 +3,9 @@
 //---------------------------------------------------------------------------
 
 This project contains an implementation of the PLOC-BVH builder based on parallel
-locally ordered clustering. The builder is integrated into the ray tracing code 
-of Aila et al. [2]. For more details about PLOC see [1].
+locally ordered clustering [1]. The builder is integrated into the ray tracing code 
+of Aila et al. [2] and exploits the CUB library for sorting [3]. For more details 
+about PLOC see [1].
 
 //---------------------------------------------------------------------------
 // AUTHORS
