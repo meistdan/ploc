@@ -798,71 +798,100 @@ void GLContext::checkErrors(void)
 
 bool GLContext::choosePixelFormat(int& formatIdx, HDC hdc, const Config& config)
 {
-    // Requirements.
+	// $$DM
+	// problem with new driver and wglChoosePixelFormatARB
+	// fixing by using ChoosePixelFormat instead
+#if 1
+	PIXELFORMATDESCRIPTOR pfd = {
+		sizeof(PIXELFORMATDESCRIPTOR),		//  size of this pfd  
+		1,									// version number  
+		PFD_DRAW_TO_WINDOW |				// support window  
+		PFD_SUPPORT_OPENGL |				// support OpenGL  
+		PFD_DOUBLEBUFFER |				// double buffered  
+		(config.isStereo ? PFD_STEREO : 0),	// stereo if enabled
+		PFD_TYPE_RGBA,						// RGBA type  
+		24,									// 24-bit color depth  
+		0, 0, 0, 0, 0, 0,					// color bits ignored  
+		0,									// no alpha buffer  
+		0,									// shift bit ignored  
+		0,									// no accumulation buffer  
+		0, 0, 0, 0,							// accum bits ignored  
+		32,									// 32-bit z-buffer      
+		8,									// 8-bit stencil
+		0,									// no auxiliary buffer  
+		PFD_MAIN_PLANE,						// main layer  
+		0,									// reserved  
+		0, 0, 0								// layer masks ignored  
+	};
+	formatIdx = ChoosePixelFormat(hdc, &pfd);
+	return formatIdx != 0;
+#else
+	// Requirements.
 
-    Array<Vec2i> reqs; // token, value
-    reqs.add(Vec2i(WGL_DRAW_TO_WINDOW_ARB,  1));
-    reqs.add(Vec2i(WGL_ACCELERATION_ARB,    WGL_FULL_ACCELERATION_ARB));
-    reqs.add(Vec2i(WGL_SUPPORT_OPENGL_ARB,  1));
-    reqs.add(Vec2i(WGL_DOUBLE_BUFFER_ARB,   1));
-    reqs.add(Vec2i(WGL_PIXEL_TYPE_ARB,      WGL_TYPE_RGBA_ARB));
-    reqs.add(Vec2i(WGL_DEPTH_BITS_ARB,      24));
-    reqs.add(Vec2i(WGL_STENCIL_BITS_ARB,    8));
-    reqs.add(Vec2i(WGL_STEREO_ARB,          (config.isStereo) ? 1 : 0));
+	Array<Vec2i> reqs; // token, value
+	reqs.add(Vec2i(WGL_DRAW_TO_WINDOW_ARB, 1));
+	reqs.add(Vec2i(WGL_ACCELERATION_ARB, WGL_FULL_ACCELERATION_ARB));
+	reqs.add(Vec2i(WGL_SUPPORT_OPENGL_ARB, 1));
+	reqs.add(Vec2i(WGL_DOUBLE_BUFFER_ARB, 1));
+	reqs.add(Vec2i(WGL_PIXEL_TYPE_ARB, WGL_TYPE_RGBA_ARB));
+	reqs.add(Vec2i(WGL_DEPTH_BITS_ARB, 24));
+	reqs.add(Vec2i(WGL_STENCIL_BITS_ARB, 8));
+	reqs.add(Vec2i(WGL_STEREO_ARB, (config.isStereo) ? 1 : 0));
 
-    if (config.numSamples > 1)
-        reqs.add(Vec2i(WGL_SAMPLES_ARB, config.numSamples)); // WGL_ARB_multisample
+	if (config.numSamples > 1)
+		reqs.add(Vec2i(WGL_SAMPLES_ARB, config.numSamples)); // WGL_ARB_multisample
 
-    reqs.add(0);
+	reqs.add(0);
 
-    // Preferences.
+	// Preferences.
 
-    Array<Vec3i> prefs; // token, value, weight
-    prefs.add(Vec3i(WGL_RED_BITS_ARB,           8,  8));
-    prefs.add(Vec3i(WGL_GREEN_BITS_ARB,         8,  8));
-    prefs.add(Vec3i(WGL_BLUE_BITS_ARB,          8,  8));
-    prefs.add(Vec3i(WGL_ALPHA_BITS_ARB,         8,  0));
-    prefs.add(Vec3i(WGL_ACCUM_BITS_ARB,         0,  16));
-    prefs.add(Vec3i(WGL_AUX_BUFFERS_ARB,        0,  16));
-    prefs.add(Vec3i(WGL_NUMBER_OVERLAYS_ARB,    0,  16));
-    prefs.add(Vec3i(WGL_NUMBER_UNDERLAYS_ARB,   0,  16));
+	Array<Vec3i> prefs; // token, value, weight
+	prefs.add(Vec3i(WGL_RED_BITS_ARB, 8, 8));
+	prefs.add(Vec3i(WGL_GREEN_BITS_ARB, 8, 8));
+	prefs.add(Vec3i(WGL_BLUE_BITS_ARB, 8, 8));
+	prefs.add(Vec3i(WGL_ALPHA_BITS_ARB, 8, 0));
+	prefs.add(Vec3i(WGL_ACCUM_BITS_ARB, 0, 16));
+	prefs.add(Vec3i(WGL_AUX_BUFFERS_ARB, 0, 16));
+	prefs.add(Vec3i(WGL_NUMBER_OVERLAYS_ARB, 0, 16));
+	prefs.add(Vec3i(WGL_NUMBER_UNDERLAYS_ARB, 0, 16));
 
-    // Query formats that fulfill the requirements.
+	// Query formats that fulfill the requirements.
 
-    if (!GL_FUNC_AVAILABLE(wglChoosePixelFormatARB))
-        fail("wglChoosePixelFormatARB() not available!");
+	if (!GL_FUNC_AVAILABLE(wglChoosePixelFormatARB))
+		fail("wglChoosePixelFormatARB() not available!");
 
-    UINT numFormats = 0;
-    if (!wglChoosePixelFormatARB(hdc, &reqs[0].x, NULL, 0, NULL, &numFormats))
-        failWin32Error("wglChoosePixelFormatARB");
-    if (numFormats == 0)
-        return false;
+	UINT numFormats = 0;
+	if (!wglChoosePixelFormatARB(hdc, &reqs[0].x, NULL, 0, NULL, &numFormats))
+		failWin32Error("wglChoosePixelFormatARB");
+	if (numFormats == 0)
+		return false;
 
-    Array<int> formats(NULL, numFormats);
-    if (!wglChoosePixelFormatARB(hdc, &reqs[0].x, NULL, numFormats, formats.getPtr(), &numFormats))
-        failWin32Error("wglChoosePixelFormatARB");
+	Array<int> formats(NULL, numFormats);
+	if (!wglChoosePixelFormatARB(hdc, &reqs[0].x, NULL, numFormats, formats.getPtr(), &numFormats))
+		failWin32Error("wglChoosePixelFormatARB");
 
-    // Choose format based on the preferences.
+	// Choose format based on the preferences.
 
-    S32 bestCost = FW_S32_MAX;
-    for (int i = 0; i < (int)numFormats; i++)
-    {
-        S32 cost = 0;
-        for (int j = 0; j < prefs.getSize(); j++)
-        {
-            int value = 0;
-            if (!wglGetPixelFormatAttribivARB(hdc, formats[i], 0, 1, &prefs[j].x, &value))
-                failWin32Error("wglGetPixelFormatAttribivARB");
-            cost += abs(value - prefs[j].y) << prefs[j].z;
-        }
+	S32 bestCost = FW_S32_MAX;
+	for (int i = 0; i < (int)numFormats; i++)
+	{
+		S32 cost = 0;
+		for (int j = 0; j < prefs.getSize(); j++)
+		{
+			int value = 0;
+			if (!wglGetPixelFormatAttribivARB(hdc, formats[i], 0, 1, &prefs[j].x, &value))
+				failWin32Error("wglGetPixelFormatAttribivARB");
+			cost += abs(value - prefs[j].y) << prefs[j].z;
+		}
 
-        if (cost < bestCost)
-        {
-            formatIdx = formats[i];
-            bestCost = cost;
-        }
-    }
-    return true;
+		if (cost < bestCost)
+		{
+			formatIdx = formats[i];
+			bestCost = cost;
+		}
+	}
+	return true;
+#endif
 }
 
 //------------------------------------------------------------------------

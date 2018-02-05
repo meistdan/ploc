@@ -19,7 +19,7 @@ Czech Technical University in Prague
 //---------------------------------------------------------------------------
 
 - Microsoft Windows 7+
-- CUDA 7.5, compute capability 3.0+
+- CUDA 9.1, compute capability 3.0+
 - Windows: Visual Studio C++ 12.0
 
 Notes:
